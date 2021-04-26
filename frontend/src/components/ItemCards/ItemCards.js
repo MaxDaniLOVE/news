@@ -11,6 +11,20 @@ const Item = ({ comments, description, image, liked, id }) => {
             console.log(e)
         }
     }
+    const onLike = async () => {
+        try {
+            await axios.put(`http://localhost:8080/news/${id}/like`)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    const onDislike= async () => {
+        try {
+            await axios.delete(`http://localhost:8080/news/${id}/like`)
+        } catch (e) {
+            console.log(e)
+        }
+    }
     const onChangeComment = ({ target: { value } }) => setComment(value);
     return (
         <div className='card'>
@@ -18,6 +32,8 @@ const Item = ({ comments, description, image, liked, id }) => {
             <p>{description}</p>
             <textarea onChange={onChangeComment} value={comment} />
             <button onClick={onPostComment}>post</button>
+            <button onClick={onLike}>like</button>
+            <button onClick={onDislike}>dislike</button>
         </div>
     )
 }
