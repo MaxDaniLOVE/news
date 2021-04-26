@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { auth } from '../../firebase';
+import ItemCards from '../../components/ItemCards';
 
 const MainPage = () => {
     const history = useHistory();
@@ -9,9 +10,9 @@ const MainPage = () => {
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         if (!token) history.push('/login');
-        const config = { headers: { Authorization: `Bearer ${token}` } };
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         (async () => {
-            const { data: { news = [] } } = await axios.get('http://localhost:8080/news', config)
+            const { data: { news = [] } } = await axios.get('http://localhost:8080/news')
             setNews(news)
         })()
     }, [])
@@ -24,6 +25,7 @@ const MainPage = () => {
         <div>
             MainPage
             <button onClick={onLogout}>LOGOUT</button>
+            <ItemCards news={news} />
         </div>
     );
 };

@@ -14,7 +14,10 @@ function authMiddleware (request, response, next) {
     firebase
         .auth()
         .verifyIdToken(token)
-        .then(() => next())
+        .then(({ user_id }) => {
+            request.loggedUserData = { userId: user_id};
+            next()
+        })
         .catch(() => response.send({ message: 'Could not authorize' }).status(403));
 }
 
