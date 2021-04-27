@@ -12,7 +12,7 @@ const MainPage = () => {
         if (!token) history.push('/login');
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         (async () => {
-            const { data: { news = [] } } = await axios.get('http://localhost:8080/news')
+            const { data: { news = [] } } = await axios.get('http://localhost:5500/news')
             setNews(news)
         })()
     }, [])

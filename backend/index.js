@@ -14,4 +14,4 @@ app.use('/', authMiddleware);
 
 app.use('/news', newsRoute);
 
-app.listen(8080, () => console.log("The server is running at PORT 8080"));
+app.listen(5500, () => console.log("The server is running at PORT 5500"));

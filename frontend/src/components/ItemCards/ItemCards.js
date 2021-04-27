@@ -6,21 +6,21 @@ const Item = ({ comments, description, image, liked, id }) => {
     const [ comment, setComment ] = useState('');
     const onPostComment = async () => {
         try {
-            await axios.put(`http://localhost:8080/news/${id}/comment`, { comment })
+            await axios.put(`http://localhost:5500/news/${id}/comment`, { comment })
         } catch (e) {
             console.log(e)
         }
     }
     const onLike = async () => {
         try {
-            await axios.put(`http://localhost:8080/news/${id}/like`)
+            await axios.put(`http://localhost:5500/news/${id}/like`)
         } catch (e) {
             console.log(e)
         }
     }
     const onDislike= async () => {
         try {
-            await axios.delete(`http://localhost:8080/news/${id}/like`)
+            await axios.delete(`http://localhost:5500/news/${id}/like`)
         } catch (e) {
             console.log(e)
         }
