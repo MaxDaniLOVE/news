@@ -51,6 +51,7 @@ const Item = ({ comments, description, image, liked, id }) => {
                 ))
             }
             <button onClick={onPostComment}>post</button>
+            <span>Already liked {likedBy.length}</span>
             { isLikedByUser ? <button onClick={onDislike}>dislike</button> : <button onClick={onLike}>like</button> } 
         </div>
     )

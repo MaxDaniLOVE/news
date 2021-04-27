@@ -2,15 +2,24 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
 }
 
 .card {
     display: flex;
     flex-direction: column;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px black solid;
+    width: 30vw;
 }
 
 .card img{
     height: 200px;
     width: 200px;
+    align-self: center;
+}
+
+.card p{
+    margin: .5rem 0;
 }
