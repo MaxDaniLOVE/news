@@ -1,8 +1,6 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import LoginPage from '../../pages/LoginPage';
-import MainPage from '../../pages/MainPage';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import GreenCorner from '../../pages/GreenCorner';
 import Shops from '../../pages/Shops';
 import Recycling from '../../pages/Recycling';
@@ -13,12 +11,6 @@ export default function App() {
         <div className='app'>
             <BrowserRouter>
                 <Switch>
-                    {/* <Route path={'/login'}>
-                        <LoginPage />
-                    </Route>
-                    <Route path={'/'}>
-                        <MainPage />
-                    </Route> */}
                     <Route path={'/green-corner'}>
                         <GreenCorner />
                     </Route>
@@ -31,6 +23,7 @@ export default function App() {
                     <Route path={'/eco-friendly'}>
                         <EcoFriendly />
                     </Route>
+                    <Redirect to={'/green-corner'}/>
                 </Switch>
             </BrowserRouter>
         </div>

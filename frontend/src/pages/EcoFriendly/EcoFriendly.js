@@ -1,62 +1,94 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { auth } from '../../firebase';
+import axios from 'axios'
+import { urlBase } from '../../constants'
+import ItemCards from '../../components/ItemCards';
 
 const EcoFriendly = () => {
+    const [ email, setEmail ] = useState('');
+    const [ password, setPassword ] = useState('');
+    const [ isRegisterMode, setIsRegisterMode ] = useState(false);
+    const [ isLoggedIn, setIsLoggedIn ] = useState(false);
+    async function onSubmit(e) {
+        e.preventDefault();
+        try {
+            if (isRegisterMode) {
+                await auth.createUserWithEmailAndPassword(email, password);
+            } else {
+                await auth.signInWithEmailAndPassword(email, password);
+            }
+            const token = await auth.currentUser.getIdToken();
+            const { uid: userId, email: userEmail } = auth.currentUser;
+            if (token && userId && userEmail) {
+                localStorage.setItem('authToken', token);
+                localStorage.setItem('userId', userId);
+                localStorage.setItem('userEmail', userEmail);
+                setIsLoggedIn(true)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    const onChangeEmail = ({ target: { value } }) => setEmail(value);
+    const onChangePassword = ({ target: { value } }) => setPassword(value);
+    const onChangeRegisterMode = ({ target: { checked } }) => setIsRegisterMode(checked);
+    const [ news, setNews ] = useState([]);
+    useEffect(() => {
+        const token = localStorage.getItem('authToken');
+        (async () => {
+            const { data: { news = [] } } = await axios.get(`${urlBase}/news`)
+            setNews(news)
+        })()
+        if (!token) return;
+        setIsLoggedIn(true)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }, [ isLoggedIn ])
+    const onLogout = async () => {
+        await auth.signOut();
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userEmail');
+        setIsLoggedIn(false)
+    }
     return (
         <>
         <div class="header">
-        <a href="/green-corner">Главное</a>
-        <a href="/shops">Магазины</a>
-        <a href="/recycling">Сортировка мусора</a>
-        <a href="/eco-friendly">Eco-friendly</a>
-    </div>
-    <div class="plog">
-        <div class="plogimg">
-            <img src="img/52.jpg" alt="коробка" title="коробка" style={{ width: '100%', borderRadius: '10px', marginBottom: '20px' }} />
-            <img src="img/53.jpg" alt="коробка" title="коробка" style={{ width: '100%', borderRadius: '10px' }}  />
+            <a href="/green-corner">Главное</a>
+            <a href="/shops">Магазины</a>
+            <a href="/recycling">Сортировка мусора</a>
+            <a href="/eco-friendly">Eco-friendly</a>
         </div>
-        <div class="plogtext">
-            Сортировка мусора является ключевой частью в проблеме экологии мира и нашей страны. Каждый раз, выбрасывая стаканчик от йогурта или зубную щетку даже в урну для пластика, нужно задуматься, правильно ли это. В Беларуси существуют определенные нормативные документы, которые помогут в этом разобраться. В первую очередь, при утилизации отходов, стоит обратить внимание, токсичные это отходы или нет. Следующим пунктом, влияющим на переработку отходов, является – это наличие организации, которая сможет правильно переработать токсичные отходы.
-            В РБ процессу переработки подвергаются следующий виды отходов:
-            - пластик, у данный материал можно вторично переработать только если это определенные виды пластика. Так как контейнеры из полистирола не должны утилизироваться.
-            стекло, стекло легко утилизируется и обрабатывается, также стоит задуматься, что нельзя легко утилизировать такие стеклянные емкости, как те, к которых были лекарства.
-            - бумага, в основу правила переработки бумаги входит утилизация бумаги без примесей, это могут быть журналы, газеты, рулоны. Но стоит помнить, что нельзя утилизировать такие бумажные средства, как фольга, чеки, салфетки.
-            - био-отходы, в РБ не развита технология по получению топлива или газа из бытового мусора, поэтому в данной нише ограничений по утилизации нет.
-            
+        <div>
+            {
+                !isLoggedIn ? (
+                    <form onSubmit={onSubmit}>
+                        <label htmlFor='email'>
+                            Email:
+                            <input type='email' id='email' value={email} onChange={onChangeEmail}/>
+                        </label>
+                        <label htmlFor='password'>
+                            Password:
+                            <input type='password' id='password' value={password} onChange={onChangePassword}/>
+                        </label>
+                        <label htmlFor='isRegisterMode'>
+                            Register:
+                            <input type='checkbox' id='isRegisterMode' value={isRegisterMode} onChange={onChangeRegisterMode}/>
+                        </label>
+                        <button type='submit' className='login-button'>
+                            {isRegisterMode ? 'Register' : 'Login'}
+                        </button>
+                    </form>
+                ) : <button onClick={onLogout}>LOGOUT</button>
+            }
         </div>
-    </div>
-    <div class="plog">
-        <div class="plogtext">
-            Многослойные упаковки Экологически безопасные, натуральные изделия – бьютиупаковка. Любимый сердцу полиэтилен, отправляясь на свалку, начинает вторую долгую и разрушительную жизнь: тотальное загрязнение почвы, непоправимый вред природной зоне. Бьютиупаковка
-            избавляет от подобной проблемы район проживания. Основа – материалы без использования химически активных веществ. Утиль распадается в земле за две-три недели, не оставляя токсичных отложений. При сжигании такой тары, экосреда не насыщается
-            опасными соединениями и тяжелыми металлами. Причина в инновационных технологиях на базе микрогофрокартона – прочного, эстетичного экоматериала толщиной не более 0.9-1.8мм. Но любая упаковка имеет слой пленки, скажете вы, и будете правы: бьюти-тара
-            снабжена термоусадочной пленкой, из кукурузного жмыха! Направление развития – опт промгруппы и продгруппы: пакеты, коробочки, экоупаковки парфюмерии и косметики, телефонов и IP-аксессуаров, сувениры и посуда. Стоящий пример: лотки для яиц
-            из картонной пульпы, которую в 30-х годах подарил нам Хартман. Но и он не мог мечтать о упаковке Gogol Mogol, потянув за кольцо которой хозяин получает вареное яйцо – модном тренде российской дизайнерской компании Kian.
+        <ItemCards news={news} />
+        <div id="footer">
+            <div className="contacts">
+                <a href="https://www.instagram.com/namealina_/"><img src="img/inst.png" title="инстаграм" alt="инстаграм" /></a>
+                <a href="https://vk.com/alina_strukova"><img src="img/vk.png" title="вконтакте" alt="вконтакте" /></a>
+            </div>
+            <div class="copyright">@2020.Created by Alina Strukova.</div>
         </div>
-        <div class="plogimg">
-            <img src="img/50.jpg" alt="коробка" title="коробка" style={{ width: '100%', borderRadius: '10px', marginBottom: '20px' }}  />
-            <img src="img/54.jpg" alt="коробка" title="коробка" style={{ width: '100%', borderRadius: '10px' }} />
-        </div>
-    </div>
-    <div class="plog">
-        <div class="plogimg">
-            <img src="img/51.jpg" alt="коробка" title="коробка" style={{ width: '100%', borderRadius: '10px', marginBottom: '20px' }} />
-            <img src="img/55.jpg" alt="коробка" title="коробка" style={{ width: '100%', borderRadius: '10px' }} />
-        </div>
-        <div class="plogtext">
-            “ Феникс из пепла “ Транспортные и товарные бирки, сумки и пакеты, мешки, экосалфетки, пляжные тапочки. Основа традиционная: льняные и абаковые волокна, конопляные сумочки из нашего детства, бамбуковые и кукурузные ткани! Холщевая пляжная сумочка как
-            память о летнем отдыхе, и, возможно, приключениях. На фоне эксклюзива особо стоит отметить экобизнес Eden’s Paper – биобумага с живыми семенами растений. Выбросьте такую красочную упаковку из окна авто, и через год-два на этом месте зашелестит
-            ветвями кедр. Технологи освоили импрегнирование семян в экотару, а это уже предпосылка для большого бизнеса: предлагается пакет из пяти рулонов с разными семенами. Живая тара фирмы The Life Box из США с семенами разных пород деревьев торгуется
-            по цене опта от 3.5 до 6 долл. за упаковку. Глобальные проекты или простые решения спасут мир? А может нам стоит начать с себя: подарить дорогому человеку именную сумочку из льна или обновить надоевший интерьер спальни натюрмортом в забытой,
-            но возродившейся сегодня эко-технике квиллинга?
-        </div>
-    </div>
-    <div id="footer">
-        <div class="contacts">
-            <a href="https://www.instagram.com/namealina_/"><img src="img/inst.png" title="инстаграм" alt="инстаграм" /></a>
-            <a href="https://vk.com/alina_strukova"><img src="img/vk.png" title="вконтакте" alt="вконтакте" /></a>
-        </div>
-        <div class="copyright">@2020.Created by Alina Strukova.</div>
-    </div>
         </>
     )
 }

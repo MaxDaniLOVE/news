@@ -1,6 +1,7 @@
 const express = require('express');
 const firebase = require('../firebase')
 const router = express.Router();
+const authMiddleware = require('../middlewares/auth-middleware');
 
 const db = firebase.firestore();
 
@@ -13,6 +14,8 @@ router.get('/', async (req, res) => {
     });
     return res.send({ news });
 })
+
+router.use('/', authMiddleware);
 
 router.put('/:newsId/comment', async (req, res) => {
     const { newsId } = req.params;
