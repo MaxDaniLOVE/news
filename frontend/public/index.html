@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <style>
+         a {
+          color: #008000; /* Цвет обычной ссылки */ 
+          text-decoration: none; /* Убираем подчеркивание у ссылок */
+        }
+        a:visited {
+          color: #800080; /* Цвет посещённой ссылки */
+        } 
+        a:hover {
+          color: #800000; /* Цвет ссылки при наведении на нее курсора мыши */  
+          text-decoration: underline; /* Добавляем подчеркивание */
+   }
+    </style>
+        <link rel="stylesheet" href="style.css">
+
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,8 +25,72 @@
       content="Web site created using create-react-app"
     />
     <title>React App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/fotorama/4.6.4/fotorama.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDDWgDzcYiZvk1GzctlKOcgqgjtUCLAe3w&callback=initMap" async defer></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CM3CB0S9RN"></script>
+
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      var map;
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+            lat: 53.902333,
+            lng: 27.557501
+        },
+        zoom: 12
+    });
+
+    var marker = new google.maps.Marker({
+        position: {
+            lat: 53.913202,
+            lng: 27.567472
+        },
+        map: map,
+        title: "Tiden | ул.Куйбышева, 31",
+    });
+    marker.addListener('click', () => document.location.href = "https://tiden.business.site/");
+
+    var marker = new google.maps.Marker({
+        position: {
+            lat: 53.916529,
+            lng: 27.579574
+        },
+        map: map,
+        title: "IGreen | ул.Веры Хоружей, 1а",
+    });
+    marker.addListener('click', () => document.location.href = "https://www.igreen.by");
+
+
+    var marker = new google.maps.Marker({
+        position: {
+            lat: 53.905964,
+            lng: 27.564170
+        },
+        map: map,
+        title: "ECOkit | ул.Янки Купалы, 23",
+    });
+    marker.addListener('click', () => document.location.href = "https://www.ecokit.by");
+
+
+    var marker = new google.maps.Marker({
+        position: {
+            lat: 53.882695,
+            lng: 27.516668
+        },
+        map: map,
+        title: "Zerro | ул.Грушевская, 85",
+    });
+    marker.addListener('click', () => document.location.href = "http://zerro.by");
+}
+
+    </script>
   </body>
 </html>
