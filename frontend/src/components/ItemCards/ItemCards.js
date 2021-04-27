@@ -1,26 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './itemCards.css';
 import axios from 'axios';
+import { urlBase } from '../../constants';
 
 const Item = ({ comments, description, image, liked, id }) => {
     const [ comment, setComment ] = useState('');
+    const [ availiableComments, setAvailiableComments ] = useState([]);
+    const [ likedBy, setLikedBy ] = useState([]);
+    const userId = localStorage.getItem('userId');
+    const userEmail = localStorage.getItem('userEmail');
+    const isLikedByUser = likedBy.includes(userId);
+    useEffect(() => {
+        setAvailiableComments(comments);
+        setLikedBy(liked)
+    }, [ comments, liked ]);
     const onPostComment = async () => {
         try {
-            await axios.put(`http://localhost:5500/news/${id}/comment`, { comment })
+            const { data: { comments } } = await axios.put(`${urlBase}/news/${id}/comment`, { comment });
+            setAvailiableComments(comments);
+            setComment('')
         } catch (e) {
             console.log(e)
         }
     }
     const onLike = async () => {
         try {
-            await axios.put(`http://localhost:5500/news/${id}/like`)
+            const { data: { liked } } = await axios.put(`${urlBase}/news/${id}/like`)
+            setLikedBy(liked)
         } catch (e) {
             console.log(e)
         }
     }
     const onDislike= async () => {
         try {
-            await axios.delete(`http://localhost:5500/news/${id}/like`)
+            const { data: { liked } } = await axios.delete(`${urlBase}/news/${id}/like`)
+            setLikedBy(liked)
         } catch (e) {
             console.log(e)
         }
@@ -31,9 +45,13 @@ const Item = ({ comments, description, image, liked, id }) => {
             <img src={image} alt='test' />
             <p>{description}</p>
             <textarea onChange={onChangeComment} value={comment} />
+            {
+                availiableComments.map(({ comment, email, userId }, idx) => (
+                    <p key={idx}>{comment}, send by: {email}</p>
+                ))
+            }
             <button onClick={onPostComment}>post</button>
-            <button onClick={onLike}>like</button>
-            <button onClick={onDislike}>dislike</button>
+            { isLikedByUser ? <button onClick={onDislike}>dislike</button> : <button onClick={onLike}>like</button> } 
         </div>
     )
 }

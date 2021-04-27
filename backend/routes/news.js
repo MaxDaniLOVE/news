@@ -4,7 +4,7 @@ const router = express.Router();
 
 const db = firebase.firestore();
 
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
     const snapshot = await db.collection('news').get();
     const news = snapshot.docs.map((doc) => {
         const data = doc.data() || {};
@@ -14,20 +14,20 @@ router.get('/', async (req, res, next) => {
     return res.send({ news });
 })
 
-router.put('/:newsId/comment', async (req, res, next) => {
+router.put('/:newsId/comment', async (req, res) => {
     const { newsId } = req.params;
-    const { userId } = req.loggedUserData;
+    const { userId, email } = req.loggedUserData;
     const { comment } = req.body;
     const snapshot = await db.collection('news').doc(newsId).get();
     const { comments } = snapshot.data();
-    const updatedComments = [ ...comments, { comment, userId } ]
+    const updatedComments = [ ...comments, { comment, userId, email } ]
     await db.collection('news')
         .doc(newsId)
         .set({ comments: updatedComments }, { merge: true });
     return res.send({ comments: updatedComments });
 })
 
-router.put('/:newsId/like', async (req, res, next) => {
+router.put('/:newsId/like', async (req, res) => {
     const { newsId } = req.params;
     const { userId } = req.loggedUserData;
     const snapshot = await db.collection('news').doc(newsId).get();
@@ -39,7 +39,7 @@ router.put('/:newsId/like', async (req, res, next) => {
     return res.send({ liked: [...updatedLikes] });
 })
 
-router.delete('/:newsId/like', async (req, res, next) => {
+router.delete('/:newsId/like', async (req, res) => {
     const { newsId } = req.params;
     const { userId } = req.loggedUserData;
     const snapshot = await db.collection('news').doc(newsId).get();

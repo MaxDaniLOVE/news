@@ -16,8 +16,11 @@ const LoginPage = () => {
                 await auth.signInWithEmailAndPassword(email, password);
             }
             const token = await auth.currentUser.getIdToken();
-            if (token) {
+            const { uid: userId, email: userEmail } = auth.currentUser;
+            if (token && userId && userEmail) {
                 localStorage.setItem('authToken', token);
+                localStorage.setItem('userId', userId);
+                localStorage.setItem('userEmail', userEmail);
                 history.push('/');
             }
         } catch (e) {
