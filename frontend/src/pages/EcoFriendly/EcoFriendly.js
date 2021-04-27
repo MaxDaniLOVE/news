@@ -45,6 +45,7 @@ const EcoFriendly = () => {
     }, [ isLoggedIn ])
     const onLogout = async () => {
         await auth.signOut();
+        axios.defaults.headers.common['Authorization'] = null;
         localStorage.removeItem('authToken');
         localStorage.removeItem('userId');
         localStorage.removeItem('userEmail');

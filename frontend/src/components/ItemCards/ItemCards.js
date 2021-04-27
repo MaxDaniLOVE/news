@@ -15,8 +15,10 @@ const Item = ({ comments, description, images, liked, id, idx }) => {
         setLikedBy(liked)
     }, [ comments, liked ]);
     const onPostComment = async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
         try {
-            const { data: { comments } } = await axios.put(`${urlBase}/news/${id}/comment`, { comment });
+            const { data: { comments = [] } } = await axios.put(`${urlBase}/news/${id}/comment`, { comment });
             setAvailiableComments(comments);
             setComment('')
         } catch (e) {
@@ -24,16 +26,20 @@ const Item = ({ comments, description, images, liked, id, idx }) => {
         }
     }
     const onLike = async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
         try {
-            const { data: { liked } } = await axios.put(`${urlBase}/news/${id}/like`)
+            const { data: { liked = [] } } = await axios.put(`${urlBase}/news/${id}/like`)
             setLikedBy(liked)
         } catch (e) {
             console.log(e)
         }
     }
     const onDislike= async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
         try {
-            const { data: { liked } } = await axios.delete(`${urlBase}/news/${id}/like`)
+            const { data: { liked = [] } } = await axios.delete(`${urlBase}/news/${id}/like`)
             setLikedBy(liked)
         } catch (e) {
             console.log(e)
